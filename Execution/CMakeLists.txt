@@ -10,4 +10,4 @@ file(GLOB_RECURSE SOURCES
 add_executable(execute ${SOURCES})
 
 # Link to your libraries
-target_link_libraries(execute PRIVATE core)
+target_link_libraries(execute PRIVATE core aircraft)

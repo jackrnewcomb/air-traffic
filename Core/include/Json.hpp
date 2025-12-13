@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stdexcept>
 #include <string>
 #include <unordered_map>
 #include <variant>
@@ -19,4 +20,23 @@ struct JsonValue {
   JsonValue() : value(nullptr) {}
   template <typename T>
   JsonValue(T v) : value(std::move(v)) {}
+
+  bool IsObject() const { return std::holds_alternative<JsonObject>(value); }
+
+  const JsonValue& Get(const std::string& key) const {
+    const auto& obj = std::get<JsonObject>(value);
+    auto it = obj.find(key);
+    if (it == obj.end()) {
+      throw std::runtime_error("Missing JSON key: " + key);
+    }
+    return it->second;
+  }
+
+  std::string AsString() const { return std::get<std::string>(value); }
+
+  double AsNumber() const { return std::get<double>(value); }
+
+  bool AsBool() const { return std::get<bool>(value); }
+
+  const JsonValue& operator[](const std::string& key) const { return Get(key); }
 };

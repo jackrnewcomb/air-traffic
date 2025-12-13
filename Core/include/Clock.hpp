@@ -3,6 +3,7 @@
 #include <string>
 
 class Clock {
+public:
   void Update() { timestep_++; }
 
  private:
