@@ -11,7 +11,13 @@ void registerAircraft(EntityRegistry& registry, Clock& clock, MessageBus& bus);
 int main() {
   std::string json = R"({
         "Name": "Voyager",
-        "Type": "Aircraft"
+        "Type": "Aircraft",
+        "X_Position": 10,
+        "Y_Position": 0,
+        "Z_Position": 20,
+        "X_Velocity": 5,
+        "Y_Velocity": 5,
+        "Z_Velocity": 5
     })";
 
   Clock clock;
@@ -33,10 +39,11 @@ int main() {
   std::cout << "Starting simulation!\n";
   int sim_duration = 100;
   for (int i = 0; i < sim_duration; i++) {
+    clock.Update();
     entity_manager.UpdateAll();
   }
 
   // testing the message bus
-  AircraftPositionRequestMessage request("Sim", "Aircraft");
+  AircraftPositionRequestMessage request("Sim", "Voyager");
   message_bus.Publish(request);
 }

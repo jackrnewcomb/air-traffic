@@ -4,11 +4,13 @@
 
 struct Message {
   Message() = delete;
+  virtual ~Message() = default;
+
   explicit Message(const std::string& sender, const std::string& receiver,
                    const std::string& type)
-      : sender_(sender), receiver_(receiver), type_(type) {}
+      : sender(sender), receiver(receiver), type(type) {}
 
-  std::string type_;
-  std::string sender_;
-  std::string receiver_;
+  std::string type;
+  std::string sender;
+  std::string receiver;
 };

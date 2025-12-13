@@ -2,6 +2,7 @@
 
 #include "Entity.hpp"
 #include "Json.hpp"
+#include "MessageTypes.hpp"
 
 class Aircraft : public Entity {
  public:

@@ -1,8 +1,8 @@
 #include "MessageBus.hpp"
 
 void MessageBus::Publish(Message& msg) {
-  if (subscriptions_.find(msg.type_) != subscriptions_.end()) {
-    for (auto& subscriber : subscriptions_[msg.type_]) {
+  if (subscriptions_.find(msg.type) != subscriptions_.end()) {
+    for (auto& subscriber : subscriptions_[msg.type]) {
       subscriber(msg);
     }
   }
