@@ -16,23 +16,19 @@ class VisualsSystem {
       : window_(window), messagebus_(bus) {
     // Subscribe to AircraftState messages
     messagebus_.Subscribe(
-        "AircraftPositionResponseMessage",
+        "AircraftStatusResponseMessage",
         std::bind(&VisualsSystem::ProcessAircraftPositionResponseMessage, this,
                   std::placeholders::_1));
   }
 
   void ProcessAircraftPositionResponseMessage(const Message& msg) {
-    auto response = dynamic_cast<const AircraftPositionResponseMessage*>(&msg);
-    positions_[response->sender] = {static_cast<float>(response->x),
-                                    static_cast<float>(response->y)};
-    std::cout << "Received position update from " << response->sender
-              << ": X = " << response->x << ", Y = " << response->y << "\n";
+    auto response = dynamic_cast<const AircraftStatusResponseMessage*>(&msg);
+    positions_[response->sender] = {
+        static_cast<float>(response->kinematics.position.x),
+        static_cast<float>(response->kinematics.position.y)};
   }
 
   void Update() {
-    AircraftPositionRequestMessage request("Sim", "All");
-    messagebus_.Publish(request);
-
     window_.clear(sf::Color::Black);
 
     for (const auto& [name, pos] : positions_) {

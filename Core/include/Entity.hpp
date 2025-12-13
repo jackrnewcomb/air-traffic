@@ -5,11 +5,35 @@
 #include "Clock.hpp"
 #include "MessageBus.hpp"
 
-struct Kinematics {
+struct Position {
   double x = 0, y = 0, z = 0;
+
+  Position operator-() const { return {-x, -y, -z}; }
+
+  friend Position operator-(const Position& lhs, const Position& rhs) {
+    Position result;
+    result.x = lhs.x - rhs.x;
+    result.y = lhs.y - rhs.y;
+    result.z = lhs.z - rhs.z;
+    return result;
+  }
+};
+
+struct Velocity {
+  Velocity operator-() const { return {-vx, -vy, -vz}; }
   double vx = 0, vy = 0, vz = 0;
+};
+
+struct Acceleration {
+  Acceleration operator-() const { return {-ax, -ay, -az}; }
   double ax = 0, ay = 0, az = 0;
-  double heading = 0, pitch = 0, roll = 0;
+};
+struct Kinematics {
+  Position position;
+  Velocity velocity;
+  Acceleration acceleration;
+
+  Kinematics operator-() const { return {-position, -velocity, -acceleration}; }
 };
 
 class Entity {

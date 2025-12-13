@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include "ATC.hpp"
 #include "Aircraft.hpp"
 #include "EntityManager.hpp"
 #include "EntityRegistration.hpp"
@@ -9,28 +10,39 @@
 #include "Visuals.hpp"
 
 void registerAircraft(EntityRegistry& registry, Clock& clock, MessageBus& bus);
+void registerATC(EntityRegistry& registry, Clock& clock, MessageBus& bus);
 
 int main() {
   std::string json = R"([
     {
         "Name": "Voyager",
         "Type": "Aircraft",
-        "X_Position": 10,
+        "X_Position": 0,
         "Y_Position": 0,
         "Z_Position": 20,
-        "X_Velocity": 5,
-        "Y_Velocity": 5,
-        "Z_Velocity": 5
+        "X_Velocity": 10,
+        "Y_Velocity": 10,
+        "Z_Velocity": 0
     },
     {
         "Name": "Apollo",
         "Type": "Aircraft",
-        "X_Position": 50,
+        "X_Position": 400,
         "Y_Position": 0,
         "Z_Position": 20,
-        "X_Velocity": 5,
-        "Y_Velocity": 5,
-        "Z_Velocity": 5
+        "X_Velocity": -10,
+        "Y_Velocity": 10,
+        "Z_Velocity": 0
+    },
+    {
+        "Name": "Command",
+        "Type": "ATC",
+        "X_Position": 300,
+        "Y_Position": 300,
+        "Z_Position": 0,
+        "X_Velocity": 0,
+        "Y_Velocity": 0,
+        "Z_Velocity": 0
     }
 ])";
 
@@ -42,6 +54,7 @@ int main() {
 
   EntityRegistry registry;
   registerAircraft(registry, clock, message_bus);
+  registerATC(registry, clock, message_bus);
 
   JsonParser parser(json);
   JsonValue root = parser.Parse();
@@ -54,10 +67,12 @@ int main() {
     entity_manager.Add(std::move(entity));
   }
 
-  int sim_duration = 10000;
+  int sim_duration = 100000;
   for (int i = 0; i < sim_duration; i++) {
     clock.Update();
     entity_manager.UpdateAll();
     visuals.Update();
   }
+
+  return 0;
 }

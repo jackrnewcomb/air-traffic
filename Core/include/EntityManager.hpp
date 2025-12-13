@@ -13,7 +13,6 @@ class EntityManager {
 
   void UpdateAll() {
     for (auto& entity : entities_) {
-      std::cout << "Updating " << entity->name() << "\n";
       entity->Update();
     }
   }

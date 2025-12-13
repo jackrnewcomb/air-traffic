@@ -14,4 +14,5 @@ class Aircraft : public Entity {
  protected:
   void OnRegister() override;
   void ProcessAircraftPositionRequestMessage(const Message& msg);
+  void ProcessAircraftCourseCorrectRequestMessage(const Message& msg);
 };
