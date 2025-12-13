@@ -5,6 +5,8 @@
 #include "EntityRegistration.hpp"
 #include "JsonParser.hpp"
 #include "MessageTypes.hpp"
+#include "SFML/Graphics.hpp"
+#include "Visuals.hpp"
 
 void registerAircraft(EntityRegistry& registry, Clock& clock, MessageBus& bus);
 
@@ -20,8 +22,11 @@ int main() {
         "Z_Velocity": 5
     })";
 
-  Clock clock;
+  Clock clock(0.0, 0.001);
   MessageBus message_bus;
+
+  sf::RenderWindow window(sf::VideoMode(800, 600), "Simulation");
+  VisualsSystem visuals(window, message_bus);
 
   EntityRegistry registry;
   registerAircraft(registry, clock, message_bus);
@@ -37,13 +42,15 @@ int main() {
   entity_manager.Add(std::move(entity));
 
   std::cout << "Starting simulation!\n";
-  int sim_duration = 100;
+  int sim_duration = 10000;
   for (int i = 0; i < sim_duration; i++) {
     clock.Update();
-    entity_manager.UpdateAll();
-  }
 
-  // testing the message bus
-  AircraftPositionRequestMessage request("Sim", "Voyager");
-  message_bus.Publish(request);
+    // put this in a better place
+    AircraftPositionRequestMessage request("Sim", "Voyager");
+    message_bus.Publish(request);
+
+    entity_manager.UpdateAll();
+    visuals.Update();
+  }
 }
