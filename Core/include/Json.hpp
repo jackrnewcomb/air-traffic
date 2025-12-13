@@ -39,4 +39,11 @@ struct JsonValue {
   bool AsBool() const { return std::get<bool>(value); }
 
   const JsonValue& operator[](const std::string& key) const { return Get(key); }
+
+  const JsonArray& AsArray() const {
+    if (!std::holds_alternative<JsonArray>(value)) {
+      throw std::runtime_error("JsonValue is not an array");
+    }
+    return std::get<JsonArray>(value);
+  }
 };

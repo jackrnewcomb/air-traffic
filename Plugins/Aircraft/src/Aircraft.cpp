@@ -28,14 +28,11 @@ void Aircraft::OnRegister() {
 
 void Aircraft::ProcessAircraftPositionRequestMessage(const Message& msg) {
   auto request = dynamic_cast<const AircraftPositionRequestMessage*>(&msg);
-  if (request->receiver == name_) {
-    AircraftPositionResponseMessage response(request->receiver,
-                                             request->sender);
-    response.x = kinematics_.x;
-    response.y = kinematics_.y;
-    response.z = kinematics_.z;
-    messagebus_.get().Publish(response);
-  }
+  AircraftPositionResponseMessage response(name_, request->sender);
+  response.x = kinematics_.x;
+  response.y = kinematics_.y;
+  response.z = kinematics_.z;
+  messagebus_.get().Publish(response);
 }
 
 void Aircraft::Update() {

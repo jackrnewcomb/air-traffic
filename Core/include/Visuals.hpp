@@ -30,6 +30,9 @@ class VisualsSystem {
   }
 
   void Update() {
+    AircraftPositionRequestMessage request("Sim", "All");
+    messagebus_.Publish(request);
+
     window_.clear(sf::Color::Black);
 
     for (const auto& [name, pos] : positions_) {
