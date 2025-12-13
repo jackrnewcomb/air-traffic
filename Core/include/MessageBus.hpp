@@ -9,12 +9,12 @@
 
 class MessageBus {
  public:
-  void publish(Message& msg);
-  void subscribe(const std::string& type,
+  void Publish(Message& msg);
+  void Subscribe(const std::string& type,
                  std::function<void(const Message& msg)> callback);
 
  private:
   std::unordered_map<std::string,
                      std::vector<std::function<void(const Message&)>>>
-      subscriptions;
+      subscriptions_;
 };

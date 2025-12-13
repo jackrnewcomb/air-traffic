@@ -5,7 +5,12 @@
 
 class Aircraft : public Entity {
  public:
-  explicit Aircraft(const JsonValue& cfg);
+  explicit Aircraft::Aircraft(const JsonValue& cfg, Clock& clock,
+                              MessageBus& bus);
 
   void Update() override;
+
+ protected:
+  void OnRegister() override;
+  void ProcessAircraftPositionRequestMessage(const Message& msg);
 };

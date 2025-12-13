@@ -4,8 +4,9 @@
 #include "EntityManager.hpp"
 #include "EntityRegistration.hpp"
 #include "JsonParser.hpp"
+#include "MessageTypes.hpp"
 
-void registerAircraft(EntityRegistry& registry);
+void registerAircraft(EntityRegistry& registry, Clock& clock, MessageBus& bus);
 
 int main() {
   std::string json = R"({
@@ -13,8 +14,11 @@ int main() {
         "Type": "Aircraft"
     })";
 
+  Clock clock;
+  MessageBus message_bus;
+
   EntityRegistry registry;
-  registerAircraft(registry);
+  registerAircraft(registry, clock, message_bus);
 
   JsonParser parser(json);
   JsonValue root = parser.Parse();
@@ -23,10 +27,16 @@ int main() {
 
   auto entity = registry.create(type, root);
 
-  EntityManager entity_manager;
+  EntityManager entity_manager(clock, message_bus);
   entity_manager.Add(std::move(entity));
 
+  std::cout << "Starting simulation!\n";
   int sim_duration = 100;
   for (int i = 0; i < sim_duration; i++) {
+    entity_manager.UpdateAll();
   }
+
+  // testing the message bus
+  AircraftPositionRequestMessage request("Sim", "Aircraft");
+  message_bus.Publish(request);
 }

@@ -4,14 +4,22 @@
 
 class EntityManager {
  public:
-  void Add(std::unique_ptr<Entity> e) { entities_.push_back(std::move(e)); }
+  EntityManager(Clock& clock, MessageBus& bus) : clock_(clock), bus_(bus) {}
+
+  void Add(std::unique_ptr<Entity> e) {
+    e->Register(clock_, bus_);
+    entities_.push_back(std::move(e));
+  }
 
   void UpdateAll() {
     for (auto& entity : entities_) {
+      std::cout << "Updating " << entity->name() << "\n";
       entity->Update();
     }
   }
 
  private:
   std::vector<std::unique_ptr<Entity>> entities_;
+  Clock& clock_;
+  MessageBus& bus_;
 };

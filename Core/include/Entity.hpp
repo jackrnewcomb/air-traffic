@@ -7,13 +7,22 @@
 
 class Entity {
  public:
-  void Register(std::shared_ptr<MessageBus> messagebus) {
-    messagebus_ = messagebus;
+  Entity(Clock& c, MessageBus& b) : clock_(c), messagebus_(b) {}
+  virtual ~Entity() = default;
+
+  void Register(Clock& clock, MessageBus& bus) {
+    clock_ = clock;
+    messagebus_ = bus;
+    OnRegister();
   }
-  virtual void Update() { clock_.Update(); }
+
+  virtual void Update() = 0;
+
+  std::string& name() { return name_; }
 
  protected:
+  virtual void OnRegister() {}
   std::string name_;
-  std::shared_ptr<MessageBus> messagebus_;
-  Clock clock_;
+  std::reference_wrapper<Clock> clock_;
+  std::reference_wrapper<MessageBus> messagebus_;
 };
