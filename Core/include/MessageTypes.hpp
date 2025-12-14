@@ -13,14 +13,15 @@ struct AircraftStatusResponseMessage : public Message {
   AircraftStatusResponseMessage(const std::string& sender,
                                 const std::string& receiver)
       : Message(sender, receiver, "AircraftStatusResponseMessage") {}
-  Kinematics kinematics;
+  Vector3 position;
+  double heading{0.0};
 };
 
 struct AircraftCourseCorrectRequestMessage : public Message {
   AircraftCourseCorrectRequestMessage(const std::string& sender,
                                       const std::string& receiver)
       : Message(sender, receiver, "AircraftCourseCorrectRequestMessage") {}
-  Kinematics requested_kinematics;
+  double heading{0.0};
 };
 
 struct AircraftCourseCorrectResponseMessage : public Message {
@@ -28,4 +29,18 @@ struct AircraftCourseCorrectResponseMessage : public Message {
                                        const std::string& receiver)
       : Message(sender, receiver, "AircraftCourseCorrectResponseMessage") {}
   bool Accepted{false};
+};
+
+struct NavigationRequestMessage : public Message {
+  NavigationRequestMessage(const std::string& sender,
+                           const std::string& receiver)
+      : Message(sender, receiver, "NavigationRequestMessage") {}
+  Vector3 current_position;
+};
+
+struct NavigationResponseMessage : public Message {
+  NavigationResponseMessage(const std::string& sender,
+                            const std::string& receiver)
+      : Message(sender, receiver, "NavigationResponseMessage") {}
+  double heading{0.0};
 };

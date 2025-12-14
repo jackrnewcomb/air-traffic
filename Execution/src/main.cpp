@@ -5,6 +5,7 @@
 
 #include "ATC.hpp"
 #include "Aircraft.hpp"
+#include "Destination.hpp"
 #include "EntityManager.hpp"
 #include "EntityRegistration.hpp"
 #include "JsonParser.hpp"
@@ -14,6 +15,8 @@
 
 void registerAircraft(EntityRegistry& registry, Clock& clock, MessageBus& bus);
 void registerATC(EntityRegistry& registry, Clock& clock, MessageBus& bus);
+void registerDestination(EntityRegistry& registry, Clock& clock,
+                         MessageBus& bus);
 
 std::string readFile(const std::string& path) {
   std::ifstream file(path);
@@ -38,6 +41,7 @@ int main() {
   EntityRegistry registry;
   registerAircraft(registry, clock, message_bus);
   registerATC(registry, clock, message_bus);
+  registerDestination(registry, clock, message_bus);
 
   JsonParser parser(json);
   JsonValue root = parser.Parse();

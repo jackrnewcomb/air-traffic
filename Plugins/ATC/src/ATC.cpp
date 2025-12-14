@@ -14,9 +14,9 @@ ATC::ATC(const JsonValue& cfg, Clock& clock, MessageBus& bus)
   kinematics_.position.x = cfg["X_Position"].AsNumber();
   kinematics_.position.y = cfg["Y_Position"].AsNumber();
   kinematics_.position.z = cfg["Z_Position"].AsNumber();
-  kinematics_.velocity.vx = cfg["X_Velocity"].AsNumber();
-  kinematics_.velocity.vy = cfg["Y_Velocity"].AsNumber();
-  kinematics_.velocity.vz = cfg["Z_Velocity"].AsNumber();
+  kinematics_.velocity.x = cfg["X_Velocity"].AsNumber();
+  kinematics_.velocity.y = cfg["Y_Velocity"].AsNumber();
+  kinematics_.velocity.z = cfg["Z_Velocity"].AsNumber();
 }
 
 void ATC::OnRegister() {
@@ -28,7 +28,8 @@ void ATC::OnRegister() {
 
 void ATC::ProcessAircraftPositionResponseMessage(const Message& msg) {
   auto response = dynamic_cast<const AircraftStatusResponseMessage*>(&msg);
-  subordinate_aircraft_[response->sender] = response->kinematics;
+  subordinate_aircraft_[response->sender].position = response->position;
+  subordinate_aircraft_[response->sender].heading = response->heading;
 }
 
 void ATC::Update() {
@@ -38,19 +39,19 @@ void ATC::Update() {
 
   // Update position based on velocity
   kinematics_.position.x =
-      kinematics_.velocity.vx * clock_.get().dt() + kinematics_.position.x;
+      kinematics_.velocity.x * clock_.get().dt() + kinematics_.position.x;
   kinematics_.position.y =
-      kinematics_.velocity.vy * clock_.get().dt() + kinematics_.position.y;
+      kinematics_.velocity.y * clock_.get().dt() + kinematics_.position.y;
   kinematics_.position.z =
-      kinematics_.velocity.vz * clock_.get().dt() + kinematics_.position.z;
+      kinematics_.velocity.z * clock_.get().dt() + kinematics_.position.z;
 
   // Update velocity based on acceleration
-  kinematics_.velocity.vx =
-      kinematics_.acceleration.ax * clock_.get().dt() + kinematics_.velocity.vx;
-  kinematics_.velocity.vy =
-      kinematics_.acceleration.ay * clock_.get().dt() + kinematics_.velocity.vy;
-  kinematics_.velocity.vz =
-      kinematics_.acceleration.az * clock_.get().dt() + kinematics_.velocity.vz;
+  kinematics_.velocity.x =
+      kinematics_.acceleration.x * clock_.get().dt() + kinematics_.velocity.x;
+  kinematics_.velocity.y =
+      kinematics_.acceleration.y * clock_.get().dt() + kinematics_.velocity.y;
+  kinematics_.velocity.z =
+      kinematics_.acceleration.z * clock_.get().dt() + kinematics_.velocity.z;
 
   // Check if anyones gonna hit anyone else
   for (auto& aircraft : subordinate_aircraft_) {
@@ -64,7 +65,7 @@ void ATC::Update() {
           sqrt(relative.x * relative.x + relative.y * relative.y);
 
       if (horizontalDist < 100) {
-        IssueCourseCorrect(aircraft, other_aircraft);
+        // IssueCourseCorrect(aircraft, other_aircraft);
       }
     }
   }
@@ -73,14 +74,10 @@ void ATC::Update() {
 void ATC::IssueCourseCorrect(std::pair<std::string, Kinematics> aircraft1,
                              std::pair<std::string, Kinematics> aircraft2) {
   AircraftCourseCorrectRequestMessage request_aircraft1(name_, aircraft1.first);
-  request_aircraft1.requested_kinematics = aircraft1.second;
-  request_aircraft1.requested_kinematics.velocity =
-      -request_aircraft1.requested_kinematics.velocity;
+  request_aircraft1.heading = -aircraft1.second.heading;
   messagebus_.get().Publish(request_aircraft1);
 
   AircraftCourseCorrectRequestMessage request_aircraft2(name_, aircraft2.first);
-  request_aircraft2.requested_kinematics = aircraft2.second;
-  request_aircraft2.requested_kinematics.velocity =
-      -request_aircraft2.requested_kinematics.velocity;
+  request_aircraft2.heading = -aircraft2.second.heading;
   messagebus_.get().Publish(request_aircraft2);
 }

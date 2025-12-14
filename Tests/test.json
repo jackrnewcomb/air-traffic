@@ -5,9 +5,10 @@
     "X_Position": 0,
     "Y_Position": 0,
     "Z_Position": 20,
-    "X_Velocity": 10,
-    "Y_Velocity": 10,
-    "Z_Velocity": 0
+    "X_Velocity": 0,
+    "Y_Velocity": 0,
+    "Z_Velocity": 0,
+    "Destination": "DTW"
   },
   {
     "Name": "2",
@@ -15,9 +16,10 @@
     "X_Position": 400,
     "Y_Position": 0,
     "Z_Position": 20,
-    "X_Velocity": -10,
-    "Y_Velocity": 10,
-    "Z_Velocity": 0
+    "X_Velocity": 0,
+    "Y_Velocity": 0,
+    "Z_Velocity": 0,
+    "Destination": "DTW"
   },
   {
     "Name": "Command",
@@ -35,9 +37,10 @@
     "X_Position": 0,
     "Y_Position": 150,
     "Z_Position": 20,
-    "X_Velocity": 15,
-    "Y_Velocity": 5,
-    "Z_Velocity": 0
+    "X_Velocity": 0,
+    "Y_Velocity": 0,
+    "Z_Velocity": 0,
+    "Destination": "DTW"
   },
   {
     "Name": "4",
@@ -45,8 +48,18 @@
     "X_Position": 200,
     "Y_Position": 400,
     "Z_Position": 20,
-    "X_Velocity": -10,
+    "X_Velocity": 0,
     "Y_Velocity": 0,
-    "Z_Velocity": 0
+    "Z_Velocity": 0,
+    "Destination": "DTW"
+  },
+  {
+    "Name": "DTW",
+    "Type": "Destination",
+    "Location": {
+      "X": 300,
+      "Y": 300,
+      "Z": 0
+    }
   }
 ]

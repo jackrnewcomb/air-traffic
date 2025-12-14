@@ -33,8 +33,8 @@ class VisualsSystem {
 
     auto& vp = positions_[response->sender];
 
-    Position2D newPos{static_cast<float>(response->kinematics.position.x),
-                      static_cast<float>(response->kinematics.position.y)};
+    Position2D newPos{static_cast<float>(response->position.x),
+                      static_cast<float>(response->position.y)};
 
     if (!vp.initialized) {
       vp.previous = newPos;
@@ -57,7 +57,9 @@ class VisualsSystem {
 
       sf::CircleShape circle(5.f);
       circle.setPosition(x, y);
-      circle.setFillColor(sf::Color::Green);
+
+      name == "DTW" ? circle.setFillColor(sf::Color::Blue)
+                    : circle.setFillColor(sf::Color::Green);
       window_.draw(circle);
     }
 

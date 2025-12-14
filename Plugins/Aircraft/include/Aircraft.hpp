@@ -15,4 +15,7 @@ class Aircraft : public Entity {
   void OnRegister() override;
   void ProcessAircraftPositionRequestMessage(const Message& msg);
   void ProcessAircraftCourseCorrectRequestMessage(const Message& msg);
+  void ProcessNavigationResponseMessage(const Message& msg);
+
+  std::string destination_;
 };
