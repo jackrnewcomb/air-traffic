@@ -10,6 +10,12 @@ struct Position2D {
   float x, y;
 };
 
+struct VisualPosition {
+  Position2D previous;
+  Position2D current;
+  bool initialized = false;
+};
+
 class VisualsSystem {
  public:
   VisualsSystem(sf::RenderWindow& window, MessageBus& bus)
@@ -23,17 +29,34 @@ class VisualsSystem {
 
   void ProcessAircraftPositionResponseMessage(const Message& msg) {
     auto response = dynamic_cast<const AircraftStatusResponseMessage*>(&msg);
-    positions_[response->sender] = {
-        static_cast<float>(response->kinematics.position.x),
-        static_cast<float>(response->kinematics.position.y)};
+    if (!response) return;
+
+    auto& vp = positions_[response->sender];
+
+    Position2D newPos{static_cast<float>(response->kinematics.position.x),
+                      static_cast<float>(response->kinematics.position.y)};
+
+    if (!vp.initialized) {
+      vp.previous = newPos;
+      vp.current = newPos;
+      vp.initialized = true;
+    } else {
+      vp.previous = vp.current;
+      vp.current = newPos;
+    }
   }
 
-  void Update() {
+  void Render(float alpha) {
     window_.clear(sf::Color::Black);
 
-    for (const auto& [name, pos] : positions_) {
+    for (const auto& [name, vp] : positions_) {
+      if (!vp.initialized) continue;
+
+      float x = vp.previous.x * (1.f - alpha) + vp.current.x * alpha;
+      float y = vp.previous.y * (1.f - alpha) + vp.current.y * alpha;
+
       sf::CircleShape circle(5.f);
-      circle.setPosition(pos.x, pos.y);
+      circle.setPosition(x, y);
       circle.setFillColor(sf::Color::Green);
       window_.draw(circle);
     }
@@ -44,5 +67,5 @@ class VisualsSystem {
  private:
   sf::RenderWindow& window_;
   MessageBus& messagebus_;
-  std::unordered_map<std::string, Position2D> positions_;
+  std::unordered_map<std::string, VisualPosition> positions_;
 };

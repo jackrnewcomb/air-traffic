@@ -1,0 +1,52 @@
+[
+  {
+    "Name": "1",
+    "Type": "Aircraft",
+    "X_Position": 0,
+    "Y_Position": 0,
+    "Z_Position": 20,
+    "X_Velocity": 10,
+    "Y_Velocity": 10,
+    "Z_Velocity": 0
+  },
+  {
+    "Name": "2",
+    "Type": "Aircraft",
+    "X_Position": 400,
+    "Y_Position": 0,
+    "Z_Position": 20,
+    "X_Velocity": -10,
+    "Y_Velocity": 10,
+    "Z_Velocity": 0
+  },
+  {
+    "Name": "Command",
+    "Type": "ATC",
+    "X_Position": 300,
+    "Y_Position": 300,
+    "Z_Position": 0,
+    "X_Velocity": 0,
+    "Y_Velocity": 0,
+    "Z_Velocity": 0
+  },
+  {
+    "Name": "3",
+    "Type": "Aircraft",
+    "X_Position": 0,
+    "Y_Position": 150,
+    "Z_Position": 20,
+    "X_Velocity": 15,
+    "Y_Velocity": 5,
+    "Z_Velocity": 0
+  },
+  {
+    "Name": "4",
+    "Type": "Aircraft",
+    "X_Position": 200,
+    "Y_Position": 400,
+    "Z_Position": 20,
+    "X_Velocity": -10,
+    "Y_Velocity": 0,
+    "Z_Velocity": 0
+  }
+]

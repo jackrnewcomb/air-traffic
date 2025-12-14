@@ -11,6 +11,7 @@ add_executable(execute ${SOURCES})
 
 # Link to your libraries
 target_link_libraries(execute PRIVATE core aircraft atc)
+add_dependencies(execute core aircraft atc)
 
 set(SFML_DLL_DIR "${CMAKE_BINARY_DIR}/3rd/SFML/lib/Debug")
 

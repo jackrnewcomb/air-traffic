@@ -1,4 +1,7 @@
+#include <fstream>
 #include <iostream>
+#include <sstream>
+#include <stdexcept>
 
 #include "ATC.hpp"
 #include "Aircraft.hpp"
@@ -12,39 +15,19 @@
 void registerAircraft(EntityRegistry& registry, Clock& clock, MessageBus& bus);
 void registerATC(EntityRegistry& registry, Clock& clock, MessageBus& bus);
 
+std::string readFile(const std::string& path) {
+  std::ifstream file(path);
+  if (!file) {
+    throw std::runtime_error("Failed to open file: " + path);
+  }
+
+  std::ostringstream buffer;
+  buffer << file.rdbuf();
+  return buffer.str();
+}
+
 int main() {
-  std::string json = R"([
-    {
-        "Name": "Voyager",
-        "Type": "Aircraft",
-        "X_Position": 0,
-        "Y_Position": 0,
-        "Z_Position": 20,
-        "X_Velocity": 10,
-        "Y_Velocity": 10,
-        "Z_Velocity": 0
-    },
-    {
-        "Name": "Apollo",
-        "Type": "Aircraft",
-        "X_Position": 400,
-        "Y_Position": 0,
-        "Z_Position": 20,
-        "X_Velocity": -10,
-        "Y_Velocity": 10,
-        "Z_Velocity": 0
-    },
-    {
-        "Name": "Command",
-        "Type": "ATC",
-        "X_Position": 300,
-        "Y_Position": 300,
-        "Z_Position": 0,
-        "X_Velocity": 0,
-        "Y_Velocity": 0,
-        "Z_Velocity": 0
-    }
-])";
+  auto json = readFile("../Tests/test.json");
 
   Clock clock(0.0, 0.001);
   MessageBus message_bus;
@@ -67,11 +50,22 @@ int main() {
     entity_manager.Add(std::move(entity));
   }
 
-  int sim_duration = 100000;
-  for (int i = 0; i < sim_duration; i++) {
-    clock.Update();
-    entity_manager.UpdateAll();
-    visuals.Update();
+  const float simStep = 1.0f / 60.0f;
+  float accumulator = 0.0f;
+
+  clock.Reset();
+
+  while (window.isOpen()) {
+    float frameTime = clock.RealDelta();
+    accumulator += frameTime;
+
+    while (accumulator >= simStep) {
+      clock.set_dt(simStep);
+      entity_manager.UpdateAll();
+      accumulator -= simStep;
+    }
+
+    visuals.Render(accumulator / simStep);
   }
 
   return 0;
