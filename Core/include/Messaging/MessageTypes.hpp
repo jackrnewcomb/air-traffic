@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Entity.hpp"
-#include "Message.hpp"
+#include "Entity/Entity.hpp"
+#include "Messaging/Message.hpp"
 
 struct AircraftStatusRequestMessage : public Message {
   AircraftStatusRequestMessage(const std::string& sender,

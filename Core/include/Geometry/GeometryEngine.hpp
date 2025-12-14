@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-#include "Vector3.hpp"
+#include "Geometry/Vector3.hpp"
 
 constexpr double DEG_TO_RAD = 3.14159265358979323846 / 180.0;
 

@@ -4,8 +4,8 @@
 #include <string>
 #include <unordered_map>
 
-#include "Entity.hpp"
-#include "Json.hpp"
+#include "Entity/Entity.hpp"
+#include "Parsing/Json.hpp"
 
 class EntityRegistry {
  public:

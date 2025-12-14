@@ -1,6 +1,6 @@
 #include "Aircraft.hpp"
 
-#include "EntityRegistration.hpp"
+#include "Entity/EntityRegistration.hpp"
 
 void registerAircraft(EntityRegistry& registry, Clock& clock, MessageBus& bus) {
   registry.registerType("Aircraft", [&clock, &bus](const JsonValue& cfg) {

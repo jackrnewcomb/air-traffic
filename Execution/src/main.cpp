@@ -6,12 +6,12 @@
 #include "ATC.hpp"
 #include "Aircraft.hpp"
 #include "Destination.hpp"
-#include "EntityManager.hpp"
-#include "EntityRegistration.hpp"
-#include "JsonParser.hpp"
-#include "MessageTypes.hpp"
+#include "Entity/EntityManager.hpp"
+#include "Entity/EntityRegistration.hpp"
+#include "Messaging/MessageTypes.hpp"
+#include "Parsing/JsonParser.hpp"
 #include "SFML/Graphics.hpp"
-#include "Visuals.hpp"
+#include "Visuals/Visuals.hpp"
 
 void registerAircraft(EntityRegistry& registry, Clock& clock, MessageBus& bus);
 void registerATC(EntityRegistry& registry, Clock& clock, MessageBus& bus);

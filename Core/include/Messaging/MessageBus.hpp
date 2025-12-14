@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "Message.hpp"
+#include "Messaging/Message.hpp"
 
 class MessageBus {
  public:

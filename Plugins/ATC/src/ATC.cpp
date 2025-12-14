@@ -1,6 +1,6 @@
 #include "ATC.hpp"
 
-#include "EntityRegistration.hpp"
+#include "Entity/EntityRegistration.hpp"
 
 void registerATC(EntityRegistry& registry, Clock& clock, MessageBus& bus) {
   registry.registerType("ATC", [&clock, &bus](const JsonValue& cfg) {

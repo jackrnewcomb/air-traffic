@@ -3,9 +3,9 @@
 #include <string>
 
 #include "Clock.hpp"
-#include "GeometryEngine.hpp"
-#include "MessageBus.hpp"
-#include "Vector3.hpp"
+#include "Geometry/GeometryEngine.hpp"
+#include "Geometry/Vector3.hpp"
+#include "Messaging/MessageBus.hpp"
 
 struct Kinematics {
   Vector3 position;

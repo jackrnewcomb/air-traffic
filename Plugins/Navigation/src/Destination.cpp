@@ -1,6 +1,6 @@
 #include "Destination.hpp"
 
-#include "EntityRegistration.hpp"
+#include "Entity/EntityRegistration.hpp"
 
 void registerDestination(EntityRegistry& registry, Clock& clock,
                          MessageBus& bus) {

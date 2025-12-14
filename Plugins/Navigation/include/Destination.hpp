@@ -2,9 +2,9 @@
 
 #include <map>
 
-#include "Entity.hpp"
-#include "Json.hpp"
-#include "MessageTypes.hpp"
+#include "Entity/Entity.hpp"
+#include "Messaging/MessageTypes.hpp"
+#include "Parsing/Json.hpp"
 
 class Destination : public Entity {
  public:

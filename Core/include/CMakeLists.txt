@@ -1,0 +1,5 @@
+add_subdirectory(Entity)
+add_subdirectory(Geometry)
+add_subdirectory(Messaging)
+add_subdirectory(Parsing)
+add_subdirectory(Visuals)

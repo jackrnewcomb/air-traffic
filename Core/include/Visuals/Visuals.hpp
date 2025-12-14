@@ -3,8 +3,8 @@
 #include <string>
 #include <unordered_map>
 
-#include "MessageBus.hpp"
-#include "MessageTypes.hpp"
+#include "Messaging/MessageBus.hpp"
+#include "Messaging/MessageTypes.hpp"
 
 struct Position2D {
   float x, y;

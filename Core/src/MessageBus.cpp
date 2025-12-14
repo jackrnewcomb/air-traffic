@@ -1,4 +1,4 @@
-#include "MessageBus.hpp"
+#include "Messaging/MessageBus.hpp"
 
 void MessageBus::Publish(Message& msg) {
   if (subscriptions_.find(msg.type) != subscriptions_.end()) {
