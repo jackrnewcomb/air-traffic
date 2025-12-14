@@ -43,4 +43,5 @@ struct NavigationResponseMessage : public Message {
                             const std::string& receiver)
       : Message(sender, receiver, "NavigationResponseMessage") {}
   double heading{0.0};
+  double remaining_distance{0.0};
 };

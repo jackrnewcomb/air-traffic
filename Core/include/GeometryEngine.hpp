@@ -17,15 +17,22 @@ class GeometryEngine {
     return heading;
   }
 
-  inline Vector3 GetVelocityFromHeading(double heading_deg) {
+  inline Vector3 GetVelocityFromHeading(double heading_deg, double speed) {
     double rad = heading_deg * DEG_TO_RAD;
 
     // TODO: hardcoded for now, come back to this
     Vector3 v;
-    v.x = 10 * std::cos(rad);
-    v.y = 10 * std::sin(rad);
+    v.x = speed * std::cos(rad);
+    v.y = speed * std::sin(rad);
     v.z = 0.0;
 
     return v;
+  }
+
+  inline double GetDistance(const Vector3& unitPos, const Vector3& targetPos) {
+    double distance =
+        sqrt((unitPos.x - targetPos.x) * (unitPos.x - targetPos.x) +
+             (unitPos.y - targetPos.y) * (unitPos.y - targetPos.y));
+    return distance;
   }
 };

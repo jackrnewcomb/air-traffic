@@ -57,43 +57,57 @@ void Aircraft::ProcessNavigationResponseMessage(const Message& msg) {
   auto response = dynamic_cast<const NavigationResponseMessage*>(&msg);
   if (response->receiver == name_) {
     kinematics_.heading = response->heading;
+    distance_remaining_ = response->remaining_distance;
   }
 }
 
 void Aircraft::Update() {
   // Ask the destination where we need to go
-  if (!destination_.empty()) {
+  if (flight_phase_ != FlightPhase::Arrived) {
     NavigationRequestMessage request(name_, destination_);
     request.current_position = kinematics_.position;
     messagebus_.get().Publish(request);
   }
 
-  // Update acceleration based on heading
-  Vector3 desired_velocity =
-      geometry_engine_.GetVelocityFromHeading(kinematics_.heading);
-  Vector3 velocity_error = desired_velocity - kinematics_.velocity;
+  // Update flight parameters based on status
+  if (distance_remaining_ >= 300) {
+    flight_phase_ = FlightPhase::Enroute;
+  } else if (distance_remaining_ >= 100 && distance_remaining_ < 300) {
+    flight_phase_ = FlightPhase::Approach;
+  } else if (distance_remaining_ >= 10 && distance_remaining_ < 100) {
+    flight_phase_ = FlightPhase::Landing;
+  } else if (distance_remaining_ < 10) {
+    flight_phase_ = FlightPhase::Arrived;
+  }
+  flight_parameters_ = flight_phases_[flight_phase_];
 
-  const double response_gain = 2.0;  // tuning parameter
-  const double max_accel = 15.0;     // units / s^2
+  if (flight_phase_ != FlightPhase::Arrived) {
+    // Update acceleration based on heading
+    Vector3 desired_velocity = geometry_engine_.GetVelocityFromHeading(
+        kinematics_.heading, flight_parameters_.max_speed);
+    Vector3 velocity_error = desired_velocity - kinematics_.velocity;
 
-  Vector3 acceleration_command = velocity_error * response_gain;
-  acceleration_command = clampMagnitude(acceleration_command, max_accel);
+    Vector3 acceleration_command =
+        velocity_error * flight_parameters_.response_gain;
+    acceleration_command =
+        clampMagnitude(acceleration_command, flight_parameters_.max_accel);
 
-  kinematics_.acceleration = acceleration_command;
+    kinematics_.acceleration = acceleration_command;
 
-  // Update velocity based on acceleration
-  kinematics_.velocity.x =
-      kinematics_.acceleration.x * clock_.get().dt() + kinematics_.velocity.x;
-  kinematics_.velocity.y =
-      kinematics_.acceleration.y * clock_.get().dt() + kinematics_.velocity.y;
-  kinematics_.velocity.z =
-      kinematics_.acceleration.z * clock_.get().dt() + kinematics_.velocity.z;
+    // Update velocity based on acceleration
+    kinematics_.velocity.x =
+        kinematics_.acceleration.x * clock_.get().dt() + kinematics_.velocity.x;
+    kinematics_.velocity.y =
+        kinematics_.acceleration.y * clock_.get().dt() + kinematics_.velocity.y;
+    kinematics_.velocity.z =
+        kinematics_.acceleration.z * clock_.get().dt() + kinematics_.velocity.z;
 
-  // Update position based on velocity
-  kinematics_.position.x =
-      kinematics_.velocity.x * clock_.get().dt() + kinematics_.position.x;
-  kinematics_.position.y =
-      kinematics_.velocity.y * clock_.get().dt() + kinematics_.position.y;
-  kinematics_.position.z =
-      kinematics_.velocity.z * clock_.get().dt() + kinematics_.position.z;
+    // Update position based on velocity
+    kinematics_.position.x =
+        kinematics_.velocity.x * clock_.get().dt() + kinematics_.position.x;
+    kinematics_.position.y =
+        kinematics_.velocity.y * clock_.get().dt() + kinematics_.position.y;
+    kinematics_.position.z =
+        kinematics_.velocity.z * clock_.get().dt() + kinematics_.position.z;
+  }
 }

@@ -32,6 +32,8 @@ void Destination::ProcessNavigationRequestMessage(const Message& msg) {
     NavigationResponseMessage response(name_, request->sender);
     response.heading = geometry_engine_.GetHeading(request->current_position,
                                                    kinematics_.position);
+    response.remaining_distance = geometry_engine_.GetDistance(
+        request->current_position, kinematics_.position);
     messagebus_.get().Publish(response);
   }
 }
