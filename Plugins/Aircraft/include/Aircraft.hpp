@@ -25,7 +25,6 @@ class Aircraft : public Entity {
   void ProcessAircraftCourseCorrectRequestMessage(const Message& msg);
   void ProcessNavigationResponseMessage(const Message& msg);
 
-  std::string destination_;
   std::unordered_map<FlightPhase, FlightParameters> flight_phases_{
       {FlightPhase::Enroute, {30.0, 10.0, 2}},
       {FlightPhase::Approach, {20.0, 5.0, 2}},
@@ -35,4 +34,6 @@ class Aircraft : public Entity {
   FlightPhase flight_phase_;
   FlightParameters flight_parameters_;
   double distance_remaining_{0.0};
+  std::vector<std::string> itinerary_;
+  int itinerary_index_{0};
 };

@@ -58,8 +58,7 @@ class VisualsSystem {
       sf::CircleShape circle(5.f);
       circle.setPosition(x, y);
 
-      name == "DTW" ? circle.setFillColor(sf::Color::Blue)
-                    : circle.setFillColor(sf::Color::Green);
+      circle.setFillColor(sf::Color::Green);
       window_.draw(circle);
     }
 

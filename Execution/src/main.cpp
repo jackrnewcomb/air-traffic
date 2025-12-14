@@ -30,7 +30,7 @@ std::string readFile(const std::string& path) {
 }
 
 int main() {
-  auto json = readFile("../Tests/test.json");
+  auto json = readFile("../Tests/itinerary_test.json");
 
   Clock clock(0.0, 0.001);
   MessageBus message_bus;

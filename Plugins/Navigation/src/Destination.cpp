@@ -12,6 +12,7 @@ void registerDestination(EntityRegistry& registry, Clock& clock,
 Destination::Destination(const JsonValue& cfg, Clock& clock, MessageBus& bus)
     : Entity(clock, bus) {
   name_ = cfg["Name"].AsString();
+  type_ = cfg["Type"].AsString();
   auto location = cfg["Location"];
   kinematics_.position.x = location["X"].AsNumber();
   kinematics_.position.y = location["Y"].AsNumber();

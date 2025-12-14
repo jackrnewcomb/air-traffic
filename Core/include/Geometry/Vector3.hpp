@@ -1,7 +1,7 @@
 #pragma once
 
 struct Vector3 {
-  double x, y, z;
+    double x{ 0.0 }, y{ 0.0 }, z{0.0};
 
   Vector3 operator+(const Vector3& o) const {
     return {x + o.x, y + o.y, z + o.z};

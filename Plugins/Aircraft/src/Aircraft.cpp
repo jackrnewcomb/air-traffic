@@ -11,14 +11,15 @@ void registerAircraft(EntityRegistry& registry, Clock& clock, MessageBus& bus) {
 Aircraft::Aircraft(const JsonValue& cfg, Clock& clock, MessageBus& bus)
     : Entity(clock, bus) {
   name_ = cfg["Name"].AsString();
+  type_ = cfg["Type"].AsString();
   kinematics_.position.x = cfg["X_Position"].AsNumber();
   kinematics_.position.y = cfg["Y_Position"].AsNumber();
   kinematics_.position.z = cfg["Z_Position"].AsNumber();
-  kinematics_.velocity.x = cfg["X_Velocity"].AsNumber();
-  kinematics_.velocity.y = cfg["Y_Velocity"].AsNumber();
-  kinematics_.velocity.z = cfg["Z_Velocity"].AsNumber();
 
-  destination_ = cfg["Destination"].AsString();
+  auto itinerary = cfg["Itinerary"].AsArray();
+  for (auto& destination : itinerary) {
+    itinerary_.push_back(destination.AsString());
+  }
 }
 
 void Aircraft::OnRegister() {
@@ -64,7 +65,7 @@ void Aircraft::ProcessNavigationResponseMessage(const Message& msg) {
 void Aircraft::Update() {
   // Ask the destination where we need to go
   if (flight_phase_ != FlightPhase::Arrived) {
-    NavigationRequestMessage request(name_, destination_);
+    NavigationRequestMessage request(name_, itinerary_[itinerary_index_]);
     request.current_position = kinematics_.position;
     messagebus_.get().Publish(request);
   }
@@ -109,5 +110,10 @@ void Aircraft::Update() {
         kinematics_.velocity.y * clock_.get().dt() + kinematics_.position.y;
     kinematics_.position.z =
         kinematics_.velocity.z * clock_.get().dt() + kinematics_.position.z;
+  } else {
+    if (itinerary_index_ < itinerary_.size() - 1) {
+      itinerary_index_++;
+      flight_phase_ = FlightPhase::Enroute;
+    }
   }
 }
