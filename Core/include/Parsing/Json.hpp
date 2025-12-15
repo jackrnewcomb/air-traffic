@@ -65,4 +65,6 @@ struct JsonValue {
     }
     return std::get<JsonArray>(value);
   }
+
+  bool Exists() const { return !std::holds_alternative<std::nullptr_t>(value); }
 };

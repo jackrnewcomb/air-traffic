@@ -1,7 +1,7 @@
 #pragma once
 
 struct Vector3 {
-    double x{ 0.0 }, y{ 0.0 }, z{0.0};
+  double x{0.0}, y{0.0}, z{0.0};
 
   Vector3 operator+(const Vector3& o) const {
     return {x + o.x, y + o.y, z + o.z};
@@ -12,6 +12,13 @@ struct Vector3 {
   }
 
   Vector3 operator*(double s) const { return {x * s, y * s, z * s}; }
+
+  Vector3& operator+=(const Vector3& rhs) {
+    x += rhs.x;
+    y += rhs.y;
+    z += rhs.z;
+    return *this;
+  }
 };
 
 double magnitude(const Vector3& v) {

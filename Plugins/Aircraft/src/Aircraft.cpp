@@ -12,13 +12,14 @@ Aircraft::Aircraft(const JsonValue& cfg, Clock& clock, MessageBus& bus)
     : Entity(clock, bus) {
   name_ = cfg["Name"].AsString();
 
-  kinematics_.position.x = cfg["X_Position"].AsNumber();
-  kinematics_.position.y = cfg["Y_Position"].AsNumber();
-  kinematics_.position.z = cfg["Z_Position"].AsNumber();
+  kinematics_.position = {cfg["X_Position"].AsNumber(),
+                          cfg["Y_Position"].AsNumber(),
+                          cfg["Z_Position"].AsNumber()};
 
-  auto itinerary = cfg["Itinerary"].AsArray();
-  for (auto& destination : itinerary) {
-    itinerary_.push_back(destination.AsString());
+  if (cfg["Itinerary"].Exists()) {
+    for (const auto& dest : cfg["Itinerary"].AsArray()) {
+      itinerary_.push_back(dest.AsString());
+    }
   }
 }
 
@@ -63,57 +64,63 @@ void Aircraft::ProcessNavigationResponseMessage(const Message& msg) {
 }
 
 void Aircraft::Update() {
-  // Ask the destination where we need to go
-  if (flight_phase_ != FlightPhase::Arrived) {
-    NavigationRequestMessage request(name_, itinerary_[itinerary_index_]);
+    if (itinerary_.empty()) {
+        flight_phase_ = FlightPhase::Arrived;
+        return;
+    }
+
+    // Ask navigation where to go
+    NavigationRequestMessage request(name_, itinerary_.front());
     request.current_position = kinematics_.position;
     messagebus_.get().Publish(request);
-  }
 
-  // Update flight parameters based on status
-  if (distance_remaining_ >= 300) {
-    flight_phase_ = FlightPhase::Enroute;
-  } else if (distance_remaining_ >= 100 && distance_remaining_ < 300) {
-    flight_phase_ = FlightPhase::Approach;
-  } else if (distance_remaining_ >= 10 && distance_remaining_ < 100) {
-    flight_phase_ = FlightPhase::Landing;
-  } else if (distance_remaining_ < 10) {
-    flight_phase_ = FlightPhase::Arrived;
-  }
-  flight_parameters_ = flight_phases_[flight_phase_];
+    UpdateFlightPhase();
+    UpdateKinematics();
 
-  if (flight_phase_ != FlightPhase::Arrived) {
-    // Update acceleration based on heading
-    Vector3 desired_velocity = geometry_engine_.GetVelocityFromHeading(
-        kinematics_.heading, flight_parameters_.max_speed);
+    // Arrival handling
+    if (flight_phase_ == FlightPhase::Arrived) {
+        itinerary_.pop_front();
+        if (!itinerary_.empty()) {
+            flight_phase_ = FlightPhase::Enroute;
+        }
+    }
+}
+
+void Aircraft::UpdateFlightPhase() {
+    if (distance_remaining_ >= 300) {
+        flight_phase_ = FlightPhase::Enroute;
+    }
+    else if (distance_remaining_ >= 100) {
+        flight_phase_ = FlightPhase::Approach;
+    }
+    else if (distance_remaining_ >= 10) {
+        flight_phase_ = FlightPhase::Landing;
+    }
+    else {
+        flight_phase_ = FlightPhase::Arrived;
+    }
+
+    flight_parameters_ = flight_phases_.at(flight_phase_);
+}
+
+
+void Aircraft::UpdateKinematics() {
+    if (flight_phase_ == FlightPhase::Arrived) return;
+
+    Vector3 desired_velocity =
+        geometry_engine_.GetVelocityFromHeading(
+            kinematics_.heading, flight_parameters_.max_speed);
+
     Vector3 velocity_error = desired_velocity - kinematics_.velocity;
 
-    Vector3 acceleration_command =
-        velocity_error * flight_parameters_.response_gain;
-    acceleration_command =
-        clampMagnitude(acceleration_command, flight_parameters_.max_accel);
+    Vector3 accel =
+        clampMagnitude(velocity_error * flight_parameters_.response_gain,
+            flight_parameters_.max_accel);
 
-    kinematics_.acceleration = acceleration_command;
+    kinematics_.acceleration = accel;
 
-    // Update velocity based on acceleration
-    kinematics_.velocity.x =
-        kinematics_.acceleration.x * clock_.get().dt() + kinematics_.velocity.x;
-    kinematics_.velocity.y =
-        kinematics_.acceleration.y * clock_.get().dt() + kinematics_.velocity.y;
-    kinematics_.velocity.z =
-        kinematics_.acceleration.z * clock_.get().dt() + kinematics_.velocity.z;
+    const double dt = clock_.get().dt();
 
-    // Update position based on velocity
-    kinematics_.position.x =
-        kinematics_.velocity.x * clock_.get().dt() + kinematics_.position.x;
-    kinematics_.position.y =
-        kinematics_.velocity.y * clock_.get().dt() + kinematics_.position.y;
-    kinematics_.position.z =
-        kinematics_.velocity.z * clock_.get().dt() + kinematics_.position.z;
-  } else {
-    if (itinerary_index_ < itinerary_.size() - 1) {
-      itinerary_index_++;
-      flight_phase_ = FlightPhase::Enroute;
-    }
-  }
+    kinematics_.velocity += accel * dt;
+    kinematics_.position += kinematics_.velocity * dt;
 }

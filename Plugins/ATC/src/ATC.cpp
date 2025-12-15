@@ -14,9 +14,6 @@ ATC::ATC(const JsonValue& cfg, Clock& clock, MessageBus& bus)
   kinematics_.position.x = cfg["X_Position"].AsNumber();
   kinematics_.position.y = cfg["Y_Position"].AsNumber();
   kinematics_.position.z = cfg["Z_Position"].AsNumber();
-  kinematics_.velocity.x = cfg["X_Velocity"].AsNumber();
-  kinematics_.velocity.y = cfg["Y_Velocity"].AsNumber();
-  kinematics_.velocity.z = cfg["Z_Velocity"].AsNumber();
 }
 
 void ATC::OnRegister() {
@@ -36,22 +33,6 @@ void ATC::Update() {
   // Ask for a position update from all aircraft
   AircraftStatusRequestMessage request(name_, "All");
   messagebus_.get().Publish(request);
-
-  // Update position based on velocity
-  kinematics_.position.x =
-      kinematics_.velocity.x * clock_.get().dt() + kinematics_.position.x;
-  kinematics_.position.y =
-      kinematics_.velocity.y * clock_.get().dt() + kinematics_.position.y;
-  kinematics_.position.z =
-      kinematics_.velocity.z * clock_.get().dt() + kinematics_.position.z;
-
-  // Update velocity based on acceleration
-  kinematics_.velocity.x =
-      kinematics_.acceleration.x * clock_.get().dt() + kinematics_.velocity.x;
-  kinematics_.velocity.y =
-      kinematics_.acceleration.y * clock_.get().dt() + kinematics_.velocity.y;
-  kinematics_.velocity.z =
-      kinematics_.acceleration.z * clock_.get().dt() + kinematics_.velocity.z;
 
   // Check if anyones gonna hit anyone else
   for (auto& aircraft : subordinate_aircraft_) {

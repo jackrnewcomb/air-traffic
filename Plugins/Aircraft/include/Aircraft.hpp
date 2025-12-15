@@ -1,5 +1,7 @@
 #pragma once
 
+#include <deque>
+
 #include "Entity/Entity.hpp"
 #include "Messaging/MessageTypes.hpp"
 #include "Parsing/Json.hpp"
@@ -24,6 +26,8 @@ class Aircraft : public Entity {
   void ProcessAircraftPositionRequestMessage(const Message& msg);
   void ProcessAircraftCourseCorrectRequestMessage(const Message& msg);
   void ProcessNavigationResponseMessage(const Message& msg);
+  void UpdateFlightPhase();
+  void UpdateKinematics();
 
   std::unordered_map<FlightPhase, FlightParameters> flight_phases_{
       {FlightPhase::Enroute, {30.0, 10.0, 2}},
@@ -34,6 +38,5 @@ class Aircraft : public Entity {
   FlightPhase flight_phase_;
   FlightParameters flight_parameters_;
   double distance_remaining_{0.0};
-  std::vector<std::string> itinerary_;
-  int itinerary_index_{0};
+  std::deque<std::string> itinerary_;
 };
