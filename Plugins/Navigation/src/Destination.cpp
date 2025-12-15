@@ -12,7 +12,6 @@ void registerDestination(EntityRegistry& registry, Clock& clock,
 Destination::Destination(const JsonValue& cfg, Clock& clock, MessageBus& bus)
     : Entity(clock, bus) {
   name_ = cfg["Name"].AsString();
-  type_ = cfg["Type"].AsString();
   auto location = cfg["Location"];
   kinematics_.position.x = location["X"].AsNumber();
   kinematics_.position.y = location["Y"].AsNumber();
@@ -23,6 +22,11 @@ void Destination::OnRegister() {
   messagebus_.get().Subscribe(
       "NavigationRequestMessage",
       std::bind(&Destination::ProcessNavigationRequestMessage, this,
+                std::placeholders::_1));
+
+  messagebus_.get().Subscribe(
+      "DestinationStatusRequestMessage",
+      std::bind(&Destination::ProcessDestinationStatusRequestMessage, this,
                 std::placeholders::_1));
 }
 
@@ -39,8 +43,12 @@ void Destination::ProcessNavigationRequestMessage(const Message& msg) {
   }
 }
 
-void Destination::Update() {
-  AircraftStatusResponseMessage test(name_, "visuals");
-  test.position = kinematics_.position;
-  messagebus_.get().Publish(test);
+void Destination::ProcessDestinationStatusRequestMessage(const Message& msg) {
+  auto request = dynamic_cast<const DestinationStatusRequestMessage*>(&msg);
+
+  DestinationStatusResponseMessage response(name_, request->sender);
+  response.position = kinematics_.position;
+  messagebus_.get().Publish(response);
 }
+
+void Destination::Update() {}

@@ -16,4 +16,5 @@ class Destination : public Entity {
  protected:
   void OnRegister() override;
   void ProcessNavigationRequestMessage(const Message& msg);
+  void ProcessDestinationStatusRequestMessage(const Message& msg);
 };

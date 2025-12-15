@@ -17,6 +17,19 @@ struct AircraftStatusResponseMessage : public Message {
   double heading{0.0};
 };
 
+struct DestinationStatusRequestMessage : public Message {
+  DestinationStatusRequestMessage(const std::string& sender,
+                                  const std::string& receiver)
+      : Message(sender, receiver, "DestinationStatusRequestMessage") {}
+};
+
+struct DestinationStatusResponseMessage : public Message {
+  DestinationStatusResponseMessage(const std::string& sender,
+                                   const std::string& receiver)
+      : Message(sender, receiver, "DestinationStatusResponseMessage") {}
+  Vector3 position;
+};
+
 struct AircraftCourseCorrectRequestMessage : public Message {
   AircraftCourseCorrectRequestMessage(const std::string& sender,
                                       const std::string& receiver)

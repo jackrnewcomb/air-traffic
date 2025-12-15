@@ -12,13 +12,18 @@ add_executable(execute ${SOURCES})
 # Link to your libraries
 target_link_libraries(execute PRIVATE core aircraft atc navigation)
 
-file(GLOB PLUGIN_DLLS "${CMAKE_BINARY_DIR}/Plugins/*/Debug/*.dll")
-
-add_custom_command(TARGET execute POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    ${PLUGIN_DLLS}
-    $<TARGET_FILE_DIR:execute>
+file(GLOB PLUGIN_DLLS CONFIGURE_DEPENDS
+    "${CMAKE_BINARY_DIR}/Plugins/*/Debug/*.dll"
 )
+
+foreach(dll ${PLUGIN_DLLS})
+    add_custom_command(TARGET execute POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        "${dll}"
+        $<TARGET_FILE_DIR:execute>
+    )
+endforeach()
+
 
 add_custom_command(TARGET execute POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory

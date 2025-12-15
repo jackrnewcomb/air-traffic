@@ -11,7 +11,7 @@ void registerAircraft(EntityRegistry& registry, Clock& clock, MessageBus& bus) {
 Aircraft::Aircraft(const JsonValue& cfg, Clock& clock, MessageBus& bus)
     : Entity(clock, bus) {
   name_ = cfg["Name"].AsString();
-  type_ = cfg["Type"].AsString();
+
   kinematics_.position.x = cfg["X_Position"].AsNumber();
   kinematics_.position.y = cfg["Y_Position"].AsNumber();
   kinematics_.position.z = cfg["Z_Position"].AsNumber();

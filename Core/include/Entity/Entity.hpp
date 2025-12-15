@@ -32,7 +32,6 @@ class Entity {
  protected:
   virtual void OnRegister() {}
   std::string name_;
-  std::string type_;
   Kinematics kinematics_;
   std::reference_wrapper<Clock> clock_;
   std::reference_wrapper<MessageBus> messagebus_;
