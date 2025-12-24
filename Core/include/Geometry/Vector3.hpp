@@ -21,17 +21,17 @@ struct Vector3 {
   }
 };
 
-double magnitude(const Vector3& v) {
+inline double magnitude(const Vector3& v) {
   return std::sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
 }
 
-Vector3 normalize(const Vector3& v) {
+inline Vector3 normalize(const Vector3& v) {
   double mag = magnitude(v);
   if (mag == 0) return {0, 0, 0};
   return v * (1.0 / mag);
 }
 
-Vector3 clampMagnitude(const Vector3& v, double maxMag) {
+inline Vector3 clampMagnitude(const Vector3& v, double maxMag) {
   double mag = magnitude(v);
   if (mag <= maxMag) return v;
   return normalize(v) * maxMag;
