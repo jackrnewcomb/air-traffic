@@ -63,6 +63,16 @@ make
 
 Simply run the `execute.exe` from `build/Execution` to see a sample output of the air traffic visualization.
 
+## Demo
+
+Below is a short demonstration of the air-traffic simulation running in real time.  
+Aircraft entities are updated by the simulation backend and rendered dynamically in the visualization frontend.
+
+https://github.com/user-attachments/assets/a9b23065-8128-479e-9808-0784c89c8c0e
+
+---
+
 ## Author 
 
 Jack Newcomb
+
